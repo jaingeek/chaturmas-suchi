@@ -4,17 +4,10 @@ async function loadData() {
     const response = await fetch(SHEET_URL);
     const data = await response.json();
 
-    const results = document.getElementById("results");
-    results.innerHTML = "";
+    console.log(data);
 
-    data.forEach(item => {
-        results.innerHTML += `
-            <div class="card">
-                <h3>${item["Saint Name"]}</h3>
-                <p><strong>Location:</strong> ${item["Location"]}</p>
-            </div>
-        `;
-    });
+    document.getElementById("results").innerHTML =
+        "<h2>Total Saints: " + data.length + "</h2>";
 }
 
 loadData();
