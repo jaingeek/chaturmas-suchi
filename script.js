@@ -1,15 +1,20 @@
 const SHEET_URL = "https://opensheet.elk.sh/1GiZA69JfSs-RDS4fsRqpp4kBBvraNJbxTqvbhOVl2Is/Table%201";
 
 async function loadData() {
-    try {
-        const response = await fetch(SHEET_URL);
-        const data = await response.json();
+    const response = await fetch(SHEET_URL);
+    const data = await response.json();
 
-        console.log("Data loaded successfully!");
-        console.log(data);
-    } catch (error) {
-        console.error("Error loading data:", error);
-    }
+    const results = document.getElementById("results");
+    results.innerHTML = "";
+
+    data.forEach(item => {
+        results.innerHTML += `
+            <div class="card">
+                <h3>${item["Saint Name"]}</h3>
+                <p><strong>Location:</strong> ${item["Location"]}</p>
+            </div>
+        `;
+    });
 }
 
 loadData();
