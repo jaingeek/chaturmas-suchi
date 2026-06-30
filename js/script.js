@@ -1,5 +1,6 @@
 const searchBox = document.getElementById("searchBox");
 const results = document.getElementById("results");
+const suggestions = document.getElementById("searchSuggestions");
 const filterButtons = document.querySelectorAll(".filter-btn");
 let currentFilter = "All";
 let data = [];
@@ -47,6 +48,9 @@ searchBox.addEventListener("input", () => {
     // If empty input
     if (value === "") {
         document.getElementById("resultCount").textContent = "";
+        suggestions.innerHTML = "";
+        suggestions.style.display = "none";
+        results.innerHTML = "";
         return;
     }
 
@@ -65,6 +69,27 @@ searchBox.addEventListener("input", () => {
         return matchesSearch && matchesFilter;
 
     });
+    suggestions.innerHTML = "";
+    filtered.slice(0, 5).forEach(item => {
+
+        const div = document.createElement("div");
+
+        div.className = "suggestion-item";
+
+        div.textContent = item["Saint Name"];
+
+        div.addEventListener("click", () => {
+
+            window.location.href = `maharaj.html?id=${item["ID"]}`;
+
+        });
+
+        suggestions.appendChild(div);
+
+    });
+    suggestions.style.display =
+        filtered.length ? "block" : "none";
+
     document.getElementById("resultCount").textContent =
         `${filtered.length} result(s) found`;
 
@@ -82,7 +107,11 @@ searchBox.addEventListener("input", () => {
     filtered.forEach(item => {
         const div = document.createElement("div");
         div.className = "card";
+        div.style.cursor = "pointer";
 
+        div.addEventListener("click", () => {
+            window.location.href = `maharaj.html?id=${item["ID"]}`;
+        });
         div.innerHTML = `
     <h3>${highlight(item["Saint Name"] || "No Name", value)}</h3>
 
