@@ -6,18 +6,16 @@ const id = params.get("id");
 
 profile.innerHTML = "<p>Loading profile...</p>";
 
-fetch(`https://opensheet.elk.sh/${CONFIG.SHEET_ID}/${CONFIG.SHEET_NAME}`)
-    .then(res => res.json())
-    .then(data => {
+loadAllMaharaj().then(data => {
 
-        const maharaj = data.find(item => item["ID"] === id);
+    const maharaj = data.find(item => item["ID"] === id);
 
-        if (!maharaj) {
-            profile.innerHTML = "<h2>Maharaj Ji not found.</h2>";
-            return;
-        }
+    if (!maharaj) {
+        profile.innerHTML = "<h2>Maharaj Ji not found.</h2>";
+        return;
+    }
 
-        profile.innerHTML = `
+    profile.innerHTML = `
 <div class="profile-card">
 
     <div class="profile-photo">
@@ -85,72 +83,72 @@ fetch(`https://opensheet.elk.sh/${CONFIG.SHEET_ID}/${CONFIG.SHEET_NAME}`)
 </div>
 `;
 
-        const related = data
-            .filter(item => item["ID"] !== maharaj["ID"])
-            .slice(0, 3);
+    const related = data
+        .filter(item => item["ID"] !== maharaj["ID"])
+        .slice(0, 3);
 
-        const relatedHTML = related.map(item => `
+    const relatedHTML = related.map(item => `
     <div class="card related-card" data-id="${item["ID"]}">
         <h4>${item["Saint Name"]}</h4>
         <p>${item["Location"] || "Location not available"}</p>
     </div>
 `).join("");
 
-        profile.innerHTML += `
+    profile.innerHTML += `
     <h2 style="margin-top:40px;">Related Maharaj Ji</h2>
     <div id="relatedContainer">
         ${relatedHTML}
     </div>
 `;
 
-        document.querySelectorAll(".related-card").forEach(card => {
+    document.querySelectorAll(".related-card").forEach(card => {
 
-            card.addEventListener("click", () => {
+        card.addEventListener("click", () => {
 
-                const id = card.dataset.id;
+            const id = card.dataset.id;
 
-                window.location.href = `maharaj.html?id=${id}`;
+            window.location.href = `maharaj.html?id=${id}`;
 
+        });
+
+    });
+
+
+    const shareBtn = document.getElementById("shareProfile");
+
+    shareBtn.addEventListener("click", async () => {
+
+        if (navigator.share) {
+
+            await navigator.share({
+                title: maharaj["Saint Name"],
+                text: `View ${maharaj["Saint Name"]}'s profile`,
+                url: window.location.href
             });
 
-        });
+        } else {
 
+            await navigator.clipboard.writeText(window.location.href);
+            alert("Profile link copied!");
 
-        const shareBtn = document.getElementById("shareProfile");
+        }
 
-        shareBtn.addEventListener("click", async () => {
+    });
 
-            if (navigator.share) {
+    const copyBtn = document.getElementById("copyNumber");
 
-                await navigator.share({
-                    title: maharaj["Saint Name"],
-                    text: `View ${maharaj["Saint Name"]}'s profile`,
-                    url: window.location.href
-                });
+    copyBtn.addEventListener("click", async () => {
 
-            } else {
+        await navigator.clipboard.writeText(maharaj["Contact Number"]);
 
-                await navigator.clipboard.writeText(window.location.href);
-                alert("Profile link copied!");
+        copyBtn.textContent = "Copied!";
 
-            }
+        setTimeout(() => {
+            copyBtn.textContent = "Copy";
+        }, 2000);
 
-        });
-
-        const copyBtn = document.getElementById("copyNumber");
-
-        copyBtn.addEventListener("click", async () => {
-
-            await navigator.clipboard.writeText(maharaj["Contact Number"]);
-
-            copyBtn.textContent = "Copied!";
-
-            setTimeout(() => {
-                copyBtn.textContent = "Copy";
-            }, 2000);
-
-        });
-    })
+    });
+})
     .catch(() => {
         profile.innerHTML = "<h2>Error loading profile.</h2>";
 

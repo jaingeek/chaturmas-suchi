@@ -483,3 +483,24 @@ mark{
 .related-card:hover{
     transform:translateY(-3px);
 }
+
+.city-chips{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin:15px 0 25px;
+}
+
+.city-chip{
+    border:none;
+    padding:8px 14px;
+    border-radius:20px;
+    cursor:pointer;
+    background:#f3f3f3;
+    transition:.2s;
+}
+
+.city-chip:hover{
+    background:#7B1E1E;
+    color:#fff;
+}
